@@ -1,0 +1,18 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+}
+
+button {
+    margin: 4px;
+    padding: 6px 10px;
+    cursor: pointer;
+}
+
+.active {
+    background: #ccc;
+}
+
+.question {
+    margin: 15px 0;
+}
