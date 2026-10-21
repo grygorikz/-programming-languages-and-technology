@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Планировщик учебных задач</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f6f9;
+            color: #1f2937;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            margin-bottom: 5px;
+        }
+
+        .subtitle {
+            color: #6b7280;
+            margin-top: 0;
+        }
+
+        button {
+            border: none;
+            cursor: pointer;
+            border-radius: 8px;
+            padding: 10px 15px;
+        }
+
+        .primary {
+            background: #2563eb;
+            color: white;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .stat {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,.05);
+        }
+
+        .stat-number {
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .stat-title {
+            color: #6b7280;
+            margin-top: 5px;
+        }
+
+        .toolbar {
+            background: white;
+            padding: 15px;
+            border-radius: 12px;
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        input,
+        select {
+            padding: 11px;
+            border: 1px solid #d1d5db;
+            border-radius: 7px;
+            font-size: 14px;
+        }
+
+        #search {
+            flex: 1;
+        }
+
+        .task {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .task h3 {
+            margin: 5px 0 10px;
+        }
+
+        .subject {
+            color: #2563eb;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .details {
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .badge {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 5px 10px;
+            border-radius: 20px;
+            background: #e0e7ff;
+            font-size: 13px;
+        }
+
+        .high {
+            color: #dc2626;
+        }
+
+        .medium {
+            color: #d97706;
+        }
+
+        .low {
+            color: #16a34a;
+        }
+
+        .overdue {
+            border-left: 5px solid #dc2626;
+        }
+
+        .actions {
+            display: flex;
+            gap: 7px;
+        }
+
+        .complete {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .edit {
+            background: #e5e7eb;
+        }
+
+        .delete {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .empty {
+            background: white;
+            text-align: center;
+            padding: 50px;
+            border-radius: 12px;
+            color: #6b7280;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,.45);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-box {
+            width: 450px;
+            max-width: 90%;
+            background: white;
+            padding: 25px;
+            border-radius: 14px;
+        }
+
+        .modal-box input,
+        .modal-box select {
+            width: 100%;
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: bold;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .error {
+            display: none;
+            background: #fee2e2;
+            color: #991b1b;
+            padding: 10px;
+            border-radius: 7px;
+            margin-bottom: 15px;
+        }
+
+        @media (max-width: 700px) {
+            .stats {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            header,
+            .toolbar,
+            .task {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .actions {
+                margin-top: 15px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <header>
+        <div>
+            <h1>Планировщик учебных задач</h1>
+            <p class="subtitle">Управление заданиями, сроками и учебной нагрузкой</p>
+        </div>
+
+        <button class="primary" onclick="openAddModal()">
+            + Новая задача
+        </button>
+    </header>
+
+    <section class="stats">
+        <div class="stat">
+            <div class="stat-number" id="totalCount">0</div>
+            <div class="stat-title">Всего задач</div>
+        </div>
+
+        <div class="stat">
+            <div class="stat-number" id="newCount">0</div>
+            <div class="stat-title">Новые</div>
+        </div>
+
+        <div class="stat">
+            <div class="stat-number" id="progressCount">0</div>
+            <div class="stat-title">В процессе</div>
+        </div>
+
+        <div class="stat">
+            <div class="stat-number" id="completedCount">0</div>
+            <div class="stat-title">Выполнено</div>
+        </div>
+    </section>
+
+    <div class="toolbar">
+        <input
+            id="search"
+            type="text"
+            placeholder="Поиск по названию или предмету..."
+            oninput="renderTasks()"
+        >
+
+        <select id="statusFilter" onchange="renderTasks()">
+            <option value="Все">Все статусы</option>
+            <option value="Новая">Новые</option>
+            <option value="В процессе">В процессе</option>
+            <option value="Выполнена">Выполненные</option>
+        </select>
+
+        <select id="priorityFilter" onchange="renderTasks()">
+            <option value="Все">Все приоритеты</option>
+            <option value="Высокий">Высокий</option>
+            <option value="Средний">Средний</option>
+            <option value="Низкий">Низкий</option>
+        </select>
+    </div>
+
+    <div id="taskList"></div>
+
+</div>
+
+
+<div class="modal" id="taskModal">
+    <div class="modal-box">
+
+        <h2 id="modalTitle">Новая задача</h2>
+
+        <div class="error" id="errorMessage"></div>
+
+        <label>Название задачи</label>
+        <input id="title" type="text" placeholder="Например: Подготовить презентацию">
+
+        <label>Предмет</label>
+        <input id="subject" type="text" placeholder="Например: Программирование">
+
+        <label>Срок выполнения</label>
+        <input id="deadline" type="date">
+
+        <label>Приоритет</label>
+        <select id="priority">
+            <option value="Низкий">Низкий</option>
+            <option value="Средний" selected>Средний</option>
+            <option value="Высокий">Высокий</option>
+        </select>
+
+        <label>Статус</label>
+        <select id="status">
+            <option value="Новая">Новая</option>
+            <option value="В процессе">В процессе</option>
+            <option value="Выполнена">Выполнена</option>
+        </select>
+
+        <div class="modal-actions">
+            <button class="primary" onclick="saveTask()">Сохранить</button>
+            <button onclick="closeModal()">Отмена</button>
+        </div>
+
+    </div>
+</div>
+
+
+<script>
+    let tasks = JSON.parse(localStorage.getItem("studyTasks")) || [];
+    let editingId = null;
+
+
+    function saveToStorage() {
+        localStorage.setItem("studyTasks", JSON.stringify(tasks));
+    }
+
+
+    function openAddModal() {
+        editingId = null;
+
+        document.getElementById("modalTitle").textContent = "Новая задача";
+        document.getElementById("title").value = "";
+        document.getElementById("subject").value = "";
+        document.getElementById("deadline").value = "";
+        document.getElementById("priority").value = "Средний";
+        document.getElementById("status").value = "Новая";
+
+        hideError();
+
+        document.getElementById("taskModal").classList.add("active");
+    }
+
+
+    function closeModal() {
+        document.getElementById("taskModal").classList.remove("active");
+        hideError();
+    }
+
+
+    function showError(message) {
+        const error = document.getElementById("errorMessage");
+
+        error.textContent = message;
+        error.style.display = "block";
+    }
+
+
+    function hideError() {
+        document.getElementById("errorMessage").style.display = "none";
+    }
+
+
+    function saveTask() {
+        const title = document.getElementById("title").value.trim();
+        const subject = document.getElementById("subject").value.trim();
+        const deadline = document.getElementById("deadline").value;
+        const priority = document.getElementById("priority").value;
+        const status = document.getElementById("status").value;
+
+        if (title === "") {
+            showError("Введите название задачи.");
+            return;
+        }
+
+        if (subject === "") {
+            showError("Введите название предмета.");
+            return;
+        }
+
+        if (deadline === "") {
+            showError("Укажите срок выполнения.");
+            return;
+        }
+
+        if (editingId === null) {
+            const task = {
+                id: Date.now(),
+                title: title,
+                subject: subject,
+                deadline: deadline,
+                priority: priority,
+                status: status
+            };
+
+            tasks.push(task);
+        } else {
+            const task = tasks.find(task => task.id === editingId);
+
+            if (task) {
+                task.title = title;
+                task.subject = subject;
+                task.deadline = deadline;
+                task.priority = priority;
+                task.status = status;
+            }
+        }
+
+        saveToStorage();
+        closeModal();
+        renderTasks();
+    }
+
+
+    function editTask(id) {
+        const task = tasks.find(task => task.id === id);
+
+        if (!task) {
+            return;
+        }
+
+        editingId = id;
+
+        document.getElementById("modalTitle").textContent =
+            "Редактирование задачи";
+
+        document.getElementById("title").value = task.title;
+        document.getElementById("subject").value = task.subject;
+        document.getElementById("deadline").value = task.deadline;
+        document.getElementById("priority").value = task.priority;
+        document.getElementById("status").value = task.status;
+
+        hideError();
+
+        document.getElementById("taskModal").classList.add("active");
+    }
+
+
+    function deleteTask(id) {
+        const result = confirm("Вы действительно хотите удалить задачу?");
+
+        if (!result) {
+            return;
+        }
+
+        tasks = tasks.filter(task => task.id !== id);
+
+        saveToStorage();
+        renderTasks();
+    }
+
+
+    function completeTask(id) {
+        const task = tasks.find(task => task.id === id);
+
+        if (task) {
+            task.status = "Выполнена";
+
+            saveToStorage();
+            renderTasks();
+        }
+    }
+
+
+    function formatDate(date) {
+        return new Date(date + "T00:00:00").toLocaleDateString("ru-RU");
+    }
+
+
+    function isOverdue(task) {
+        if (task.status === "Выполнена") {
+            return false;
+        }
+
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        const deadline = new Date(task.deadline + "T00:00:00");
+
+        return deadline < today;
+    }
+
+
+    function renderTasks() {
+        const list = document.getElementById("taskList");
+
+        const search = document
+            .getElementById("search")
+            .value
+            .toLowerCase();
+
+        const statusFilter =
+            document.getElementById("statusFilter").value;
+
+        const priorityFilter =
+            document.getElementById("priorityFilter").value;
+
+
+        let filteredTasks = tasks.filter(task => {
+
+            const matchesSearch =
+                task.title.toLowerCase().includes(search) ||
+                task.subject.toLowerCase().includes(search);
+
+            const matchesStatus =
+                statusFilter === "Все" ||
+                task.status === statusFilter;
+
+            const matchesPriority =
+                priorityFilter === "Все" ||
+                task.priority === priorityFilter;
+
+            return (
+                matchesSearch &&
+                matchesStatus &&
+                matchesPriority
+            );
+        });
+
+
+        filteredTasks.sort((a, b) =>
+            new Date(a.deadline) - new Date(b.deadline)
+        );
+
+
+        list.innerHTML = "";
+
+
+        if (filteredTasks.length === 0) {
+            list.innerHTML = `
+                <div class="empty">
+                    <h2>Задач не найдено</h2>
+                    <p>Добавьте новую учебную задачу.</p>
+                </div>
+            `;
+
+            updateStatistics();
+            return;
+        }
+
+
+        filteredTasks.forEach(task => {
+
+            const taskElement = document.createElement("div");
+
+            taskElement.className =
+                "task" + (isOverdue(task) ? " overdue" : "");
+
+
+            let priorityClass = "medium";
+
+            if (task.priority === "Высокий") {
+                priorityClass = "high";
+            }
+
+            if (task.priority === "Низкий") {
+                priorityClass = "low";
+            }
+
+
+            taskElement.innerHTML = `
+                <div>
+                    <div class="subject">
+                        ${escapeHTML(task.subject)}
+                    </div>
+
+                    <h3>
+                        ${escapeHTML(task.title)}
+                    </h3>
+
+                    <div class="details">
+                        Срок: ${formatDate(task.deadline)}
+                        ${isOverdue(task) ? " • Просрочено" : ""}
+                    </div>
+
+                    <span class="badge">
+                        ${task.status}
+                    </span>
+
+                    <span class="${priorityClass}">
+                        • ${task.priority} приоритет
+                    </span>
+                </div>
+
+                <div class="actions">
+
+                    ${
+                        task.status !== "Выполнена"
+                        ? `
+                            <button
+                                class="complete"
+                                onclick="completeTask(${task.id})"
+                            >
+                                ✓ Выполнено
+                            </button>
+                        `
+                        : ""
+                    }
+
+                    <button
+                        class="edit"
+                        onclick="editTask(${task.id})"
+                    >
+                        Изменить
+                    </button>
+
+                    <button
+                        class="delete"
+                        onclick="deleteTask(${task.id})"
+                    >
+                        Удалить
+                    </button>
+
+                </div>
+            `;
+
+            list.appendChild(taskElement);
+        });
+
+
+        updateStatistics();
+    }
+
+
+    function updateStatistics() {
+        document.getElementById("totalCount").textContent =
+            tasks.length;
+
+        document.getElementById("newCount").textContent =
+            tasks.filter(task => task.status === "Новая").length;
+
+        document.getElementById("progressCount").textContent =
+            tasks.filter(task => task.status === "В процессе").length;
+
+        document.getElementById("completedCount").textContent =
+            tasks.filter(task => task.status === "Выполнена").length;
+    }
+
+
+    function escapeHTML(text) {
+        const element = document.createElement("div");
+        element.textContent = text;
+
+        return element.innerHTML;
+    }
+
+
+    renderTasks();
+</script>
+
+</body>
+</html>
