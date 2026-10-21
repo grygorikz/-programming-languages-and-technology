@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+
+    <title>Редактирование задачи</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='style.css') }}"
+    >
+</head>
+
+<body>
+
+<div class="form-container">
+
+    <h1>Редактирование задачи</h1>
+
+    {% if error %}
+        <div class="error">
+            {{ error }}
+        </div>
+    {% endif %}
+
+    <form method="POST">
+
+        <label>Название</label>
+
+        <input
+            type="text"
+            name="title"
+            value="{{ task['title'] }}"
+        >
+
+
+        <label>Предмет</label>
+
+        <input
+            type="text"
+            name="subject"
+            value="{{ task['subject'] }}"
+        >
+
+
+        <label>Срок</label>
+
+        <input
+            type="date"
+            name="deadline"
+            value="{{ task['deadline'] }}"
+        >
+
+
+        <label>Статус</label>
+
+        <select name="status">
+
+            {% for status in statuses %}
+
+                <option
+                    value="{{ status }}"
+                    {% if task['status'] == status %}
+                        selected
+                    {% endif %}
+                >
+                    {{ status }}
+                </option>
+
+            {% endfor %}
+
+        </select>
+
+
+        <button class="button" type="submit">
+            Сохранить
+        </button>
+
+        <a class="cancel" href="{{ url_for('index') }}">
+            Отмена
+        </a>
+
+    </form>
+
+</div>
+
+</body>
+</html>

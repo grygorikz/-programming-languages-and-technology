@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+
+    <title>Добавить задачу</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='style.css') }}"
+    >
+</head>
+
+<body>
+
+<div class="form-container">
+
+    <h1>Новая учебная задача</h1>
+
+    {% if error %}
+        <div class="error">
+            {{ error }}
+        </div>
+    {% endif %}
+
+    <form method="POST">
+
+        <label>
+            Название задачи
+        </label>
+
+        <input
+            type="text"
+            name="title"
+            placeholder="Например: Подготовить презентацию"
+        >
+
+
+        <label>
+            Предмет
+        </label>
+
+        <input
+            type="text"
+            name="subject"
+            placeholder="Например: Программирование"
+        >
+
+
+        <label>
+            Срок выполнения
+        </label>
+
+        <input
+            type="date"
+            name="deadline"
+        >
+
+
+        <button class="button" type="submit">
+            Добавить
+        </button>
+
+        <a class="cancel" href="{{ url_for('index') }}">
+            Отмена
+        </a>
+
+    </form>
+
+</div>
+
+</body>
+</html>
