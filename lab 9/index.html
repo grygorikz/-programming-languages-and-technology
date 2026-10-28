@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Каталог альбомов</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="app.js" defer></script>
+</head>
+<body>
+    <header class="header">
+        <h1>📸 Каталог альбомов</h1>
+        <p>Выберите альбом, чтобы посмотреть фотографии</p>
+    </header>
+
+    <main class="container">
+        <section class="albums-section">
+            <h2>Альбомы</h2>
+            <p id="album-status" role="status" aria-live="polite">
+                Загрузка альбомов...
+            </p>
+            <div id="albums" class="albums"></div>
+            <button id="retry-albums" hidden>
+                Повторить загрузку
+            </button>
+        </section>
+
+        <section class="photos-section">
+            <h2 id="photos-title">Фотографии</h2>
+            <p id="photo-status" role="status" aria-live="polite">
+                Выберите альбом
+            </p>
+            <div id="photos" class="photos"></div>
+            <input
+    type="text"
+    id="search"
+    placeholder="Поиск альбома..."
+/>
+
+<select id="filter">
+    <option value="all">Все альбомы</option>
+    <option value="short">Короткие названия</option>
+    <option value="long">Длинные названия</option>
+</select>
+            <button id="retry-photos" hidden>
+                Повторить загрузку фотографий
+            </button>
+        </section>
+    </main>
+</body>
+</html>
