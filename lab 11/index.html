@@ -1,0 +1,60 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мои задачи — TodoList</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>Мои задачи</h1>
+            <p>Планируй свой день и достигай целей!</p>
+        </header>
+
+        <main class="todo-box">
+
+            <form id="taskForm">
+                <input
+                    type="text"
+                    id="taskInput"
+                    placeholder="Введите новую задачу..."
+                    maxlength="150"
+                    required
+                >
+                <button type="submit">Добавить</button>
+            </form>
+
+            <input
+                type="text"
+                id="searchInput"
+                class="search"
+                placeholder="Поиск задач..."
+            >
+
+            <div class="filters">
+                <button data-filter="all" class="active">Все</button>
+                <button data-filter="active">Активные</button>
+                <button data-filter="completed">Выполненные</button>
+            </div>
+
+            <div id="taskList"></div>
+
+            <div class="counter">
+                Осталось выполнить:
+                <strong id="activeCount">0</strong>
+            </div>
+
+        </main>
+
+        <footer>
+            TodoList © 2026
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
