@@ -1,0 +1,131 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Сервис заявок</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="header">
+    <div class="logo">📋 Сервис заявок</div>
+    <nav id="navigation">
+        <button onclick="showLogin()">Войти</button>
+        <button onclick="showRegister()">Регистрация</button>
+    </nav>
+</header>
+
+<main class="container">
+
+    <!-- Авторизация -->
+    <section id="loginPage" class="auth-box">
+        <h1>Добро пожаловать!</h1>
+        <p>Войдите в свой аккаунт</p>
+
+        <form id="loginForm">
+            <label>Логин</label>
+            <input type="text" id="loginUsername" placeholder="Введите логин" required>
+
+            <label>Пароль</label>
+            <input type="password" id="loginPassword" placeholder="Введите пароль" required>
+
+            <button type="submit" class="main-btn">Войти</button>
+        </form>
+
+        <p>Нет аккаунта?
+            <a href="#" onclick="showRegister()">Зарегистрироваться</a>
+        </p>
+    </section>
+
+    <!-- Регистрация -->
+    <section id="registerPage" class="auth-box hidden">
+        <h1>Регистрация</h1>
+        <p>Создайте новый аккаунт</p>
+
+        <form id="registerForm">
+            <label>Логин</label>
+            <input type="text" id="registerUsername" placeholder="Придумайте логин" required minlength="3">
+
+            <label>Пароль</label>
+            <input type="password" id="registerPassword" placeholder="Придумайте пароль" required minlength="6">
+
+            <button type="submit" class="main-btn">Создать аккаунт</button>
+        </form>
+
+        <p>Уже есть аккаунт?
+            <a href="#" onclick="showLogin()">Войти</a>
+        </p>
+    </section>
+
+    <!-- Личный кабинет -->
+    <section id="dashboardPage" class="hidden">
+
+        <div class="welcome">
+            <div>
+                <h1>Личный кабинет</h1>
+                <p>Здравствуйте, <strong id="currentUsername"></strong>!</p>
+            </div>
+            <button class="logout-btn" onclick="logout()">Выйти</button>
+        </div>
+
+        <div class="stats">
+            <div class="stat-card">
+                <h3>Всего заявок</h3>
+                <span id="totalTickets">0</span>
+            </div>
+
+            <div class="stat-card">
+                <h3>Новые заявки</h3>
+                <span id="newTickets">0</span>
+            </div>
+        </div>
+
+        <!-- Создание заявки -->
+        <div class="content-box">
+            <h2>Создать заявку</h2>
+
+            <form id="ticketForm">
+                <label>Название заявки</label>
+                <input type="text" id="ticketTitle" placeholder="Введите название" required maxlength="100">
+
+                <label>Описание</label>
+                <textarea id="ticketDescription" placeholder="Опишите вашу проблему..." required></textarea>
+
+                <button type="submit" class="main-btn">+ Отправить заявку</button>
+            </form>
+        </div>
+
+        <!-- Мои заявки -->
+        <div class="content-box">
+            <h2>Мои заявки</h2>
+            <div id="ticketsList"></div>
+        </div>
+
+    </section>
+
+    <!-- Просмотр заявки -->
+    <section id="detailPage" class="content-box hidden">
+        <h2>Информация о заявке</h2>
+        <div id="ticketDetails"></div>
+        <button class="main-btn" onclick="showDashboard()">Назад</button>
+    </section>
+
+    <!-- Ошибка доступа -->
+    <section id="errorPage" class="error-box hidden">
+        <h1 id="errorCode">403</h1>
+        <h2 id="errorTitle">Доступ запрещён</h2>
+        <p id="errorMessage">У вас нет доступа к этой странице.</p>
+        <button class="main-btn" onclick="showDashboard()">Вернуться</button>
+    </section>
+
+</main>
+
+<footer>
+    <p>© 2026 Сервис заявок | Лабораторная работа №12</p>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>
